@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href='http://fonts.googleapis.com/css?family=Text+Me+One' rel='stylesheet' type='text/css'>
+
+	<style>
+		body{
+			margin:0;
+			padding:0;
+			background-color: #000;
+		}
+		#content{
+			width:100%;
+		}
+
+		img {
+			width: 100%;
+		}
+		
+		#word{
+			z-index: 100;
+			padding: 20px;
+			display: block;
+			border: 3px solid #000;
+			margin: 0;
+			position: fixed;
+			background-color: #fff;
+			top:0px;
+			right:5%;
+			float:right;
+			font-family: 'Text Me One', sans-serif;
+			font-size: 72px;
+		}
+	</style>
+	<title>Remapping 1984</title>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+	<script type="text/javascript">google.load("search", "1");</script>
+
+	<script type="text/javascript">
+
+		function imgSearch(q) {
+			
+			// Create an Image Search instance.
+			imageSearch = new google.search.ImageSearch();
+
+			// Set searchComplete as the callback function when a search is 
+			// complete.  The imageSearch object will have results in it.
+			imageSearch.setSearchCompleteCallback(this, searchComplete, null);
+
+			
+			imageSearch.setRestriction(
+ 			google.search.ImageSearch.RESTRICT_IMAGESIZE,
+  			google.search.ImageSearch.IMAGESIZE_LARGE);
+
+			imageSearch.setResultSetSize(1);
+			
+			//Search query
+			imageSearch.execute(q);
+			
+		}
+			
+
+		function searchComplete() {
+		 if (imageSearch.results && imageSearch.results.length > 0) {
+			var imgurl = imageSearch.results[0].unescapedUrl;
+			
+			var contentDiv = document.getElementById('content');
+			contentDiv.innerHTML = "<img src="+imgurl+">";
+
+			var contentDiv = document.getElementById('word');
+			contentDiv.innerHTML = "<p>"+w+"</p>";
+		} else {console.log("no!");}
+
+		}
+
+		function outer(word) {
+			w = word;
+		}
+
+		function theText() {
+ 			var txtFile = new XMLHttpRequest();
+			txtFile.open("GET", "1984.txt", true);
+			txtFile.onreadystatechange = function () {
+ 				if (txtFile.readyState === 4) {  // Makes sure the document is ready to parse.
+    				if (txtFile.status === 200) {  // Makes sure it's found the file.
+      					allText = txtFile.responseText; 
+      					lines = txtFile.responseText.split(" "); // Will separate each line into an array
+      					imgSearch(lines[n]);
+      					outer(lines[n]);
+      					if(n<lines.length-1) {n++} else {n=0;}
+
+    				}
+  				}
+			}
+			txtFile.send(null);
+
+ 		}
+ 		var w = "something";
+		var n = 0;	
+		var si = setInterval(function() {theText()}, 2000);
+
+		//google.setOnLoadCallback(imgSearch);
+
+
+		
+		</script>
+
+</head>
+
+<body>
+	
+	<div id="word"></div>
+	<div id="content"></div>
+
+
+</body>
+
+</html>
